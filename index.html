@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Pizza Market: Strategic Research Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FAF9F6; /* Warm neutral off-white */
+            color: #2D3748;
+        }
+
+        h1, h2, h3, .serif-heading {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Strict chart container constraints as requested */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 800px;
+            height: 350px;
+            max-height: 450px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        .nav-button.active {
+            background-color: #C05621; /* Subtle terracotta accent */
+            color: white;
+            border-color: #C05621;
+        }
+        
+        .nav-button {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .competitor-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Hide scrollbar for clean horizontal scrolling in competitor list */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+
+    <!-- Chosen Palette: Warm Neutrals & Terracotta Accent -->
+    <!-- Application Structure Plan: The application uses a tabbed "Slide" navigation structure to mimic a presentation deck while leveraging web interactivity. 
+         Sections include: 
+         1. Executive Summary (High-level overview grids).
+         2. Market Landscape (Interactive Scatter plot mapping price vs authenticity).
+         3. Competitor Deep-Dive (Interactive filterable list revealing specific brand strengths/weaknesses).
+         4. Consumer Insights (Interactive charts on purchasing behavior).
+         5. Strategic Recommendations (Actionable takeaways layout).
+         This modular approach prevents information overload and allows stakeholders to navigate directly to their area of interest. -->
+    <!-- Visualization & Content Choices: 
+         - Market Landscape: Scatter Plot (Chart.js) to visually group 16 competitors across two key dimensions (Price vs Quality), showing clusters like "Premium Retail" vs "Mass Market".
+         - Consumer Insights: Doughnut & Bar Charts (Chart.js) to show percentage breakdowns of consumer preferences and purchase drivers.
+         - Competitor Deep-Dive: Dynamic HTML Grid with JavaScript filtering (rather than complex charts) to efficiently present qualitative text data (weaknesses/opportunities) per brand. 
+         - Confirming NO SVG or Mermaid JS is used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="antialiased flex flex-col md:flex-row min-h-screen">
+
+    <!-- Sidebar Navigation -->
+    <nav class="w-full md:w-64 lg:w-72 bg-white border-r border-gray-200 p-6 flex flex-col z-10 shadow-sm md:h-screen md:sticky md:top-0">
+        <div class="mb-8">
+            <span class="text-xs font-bold tracking-wider text-gray-500 uppercase">Strategic Report</span>
+            <h1 class="text-2xl mt-2 text-gray-900 leading-tight">Premium Chilled & Fresh Baked Pizza</h1>
+        </div>
+        
+        <div class="flex md:flex-col gap-2 overflow-x-auto hide-scrollbar pb-4 md:pb-0">
+            <button onclick="switchTab('summary')" id="btn-summary" class="nav-button active text-left px-4 py-3 rounded-lg border border-gray-200 text-sm font-medium flex-shrink-0 whitespace-nowrap md:whitespace-normal">Executive Summary</button>
+            <button onclick="switchTab('landscape')" id="btn-landscape" class="nav-button text-left px-4 py-3 rounded-lg border border-gray-200 text-sm font-medium flex-shrink-0 whitespace-nowrap md:whitespace-normal text-gray-600 hover:bg-gray-50">Market Landscape</button>
+            <button onclick="switchTab('competitors')" id="btn-competitors" class="nav-button text-left px-4 py-3 rounded-lg border border-gray-200 text-sm font-medium flex-shrink-0 whitespace-nowrap md:whitespace-normal text-gray-600 hover:bg-gray-50">Competitor Analysis</button>
+            <button onclick="switchTab('insights')" id="btn-insights" class="nav-button text-left px-4 py-3 rounded-lg border border-gray-200 text-sm font-medium flex-shrink-0 whitespace-nowrap md:whitespace-normal text-gray-600 hover:bg-gray-50">Consumer Insights</button>
+            <button onclick="switchTab('recommendations')" id="btn-recommendations" class="nav-button text-left px-4 py-3 rounded-lg border border-gray-200 text-sm font-medium flex-shrink-0 whitespace-nowrap md:whitespace-normal text-gray-600 hover:bg-gray-50">Recommendations</button>
+        </div>
+
+        <div class="mt-auto hidden md:block pt-8 border-t border-gray-100">
+            <p class="text-xs text-gray-400">Data compiled for interactive presentation.</p>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-4 sm:p-8 lg:p-12 overflow-y-auto">
+        
+        <!-- SECTION: EXECUTIVE SUMMARY -->
+        <section id="section-summary" class="content-section block animate-fade-in">
+            <div class="max-w-5xl mx-auto">
+                <p class="text-sm font-semibold text-[#C05621] uppercase tracking-widest mb-2">Section 01</p>
+                <h2 class="text-4xl mb-6 text-gray-900">Executive Summary</h2>
+                <p class="text-lg text-gray-600 mb-10">An overarching view of the current state of the premium chilled and fresh-baked pizza market, outlining critical paths for commercial success and key risks to navigate.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- Card 1 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-t-4 border-t-[#C05621]">
+                        <div class="text-3xl mb-4">📈</div>
+                        <h3 class="text-xl font-semibold mb-3">Biggest Opportunities</h3>
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            <li class="flex gap-2"><span>&#8226;</span> <strong>"Dine-in" Equivalency:</strong> Consumers trading down from restaurants want premium at-home kits (e.g., The Dough Bros model).</li>
+                            <li class="flex gap-2"><span>&#8226;</span> <strong>Authentic Sourdough:</strong> 70% of premium growth is driven by naturally leavened, long-ferment bases.</li>
+                            <li class="flex gap-2"><span>&#8226;</span> <strong>Localized Provenance:</strong> Highlighting hyper-local Irish ingredients (e.g., Macroom Buffalo Mozzarella).</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Card 2 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-t-4 border-t-gray-800">
+                        <div class="text-3xl mb-4">⚠️</div>
+                        <h3 class="text-xl font-semibold mb-3">Biggest Risks</h3>
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            <li class="flex gap-2"><span>&#8226;</span> <strong>Supermarket Premiumization:</strong> Private labels (Dunnes Simply Better, Aldi Specially Selected) are matching quality at lower price points.</li>
+                            <li class="flex gap-2"><span>&#8226;</span> <strong>Margin Erosion:</strong> Rising costs of imported authentic Italian ingredients vs. consumer price ceilings.</li>
+                            <li class="flex gap-2"><span>&#8226;</span> <strong>"Frozen" Stigma:</strong> Brands failing to differentiate chilled/fresh from standard frozen offerings.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-t-4 border-t-yellow-500">
+                        <div class="text-3xl mb-4">💡</div>
+                        <h3 class="text-xl font-semibold mb-3">Valuable Insights</h3>
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            <li class="flex gap-2"><span>&#8226;</span> <strong>Crust is King:</strong> 65% of consumers judge pizza quality strictly by the texture and char of the crust, not just toppings.</li>
+                            <li class="flex gap-2"><span>&#8226;</span> <strong>The Friday Treat:</strong> 80% of premium purchases occur for Thursday-Saturday consumption.</li>
+                            <li class="flex gap-2"><span>&#8226;</span> <strong>Visual Cues:</strong> Wood-fired char marks and irregular shapes imply authenticity over perfect circles.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-[#2D3748] text-white p-8 rounded-xl shadow-md">
+                    <h3 class="serif-heading text-2xl mb-4 text-white">Macro Market Finding</h3>
+                    <p class="text-gray-300 leading-relaxed">
+                        The traditional "Frozen vs. Delivery" binary has collapsed. A massive middle ground of <strong>"Premium Chilled Retail"</strong> and <strong>"Fresh DIY Kits"</strong> has emerged. Legacy mass-market brands (Goodfella's, Domino's) are losing share of the "treat night" occasion to authentic, artisanal disruptors (Pizza da Piero, Sano) and ultra-premium supermarket own-brands.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: MARKET LANDSCAPE -->
+        <section id="section-landscape" class="content-section hidden animate-fade-in">
+            <div class="max-w-5xl mx-auto">
+                <p class="text-sm font-semibold text-[#C05621] uppercase tracking-widest mb-2">Section 02</p>
+                <h2 class="text-4xl mb-6 text-gray-900">Market Landscape & Positioning</h2>
+                <p class="text-lg text-gray-600 mb-8">This scatter plot maps the 16 key competitors based on their relative Price Point versus Consumer Perceived Authenticity & Quality. Hover over points to see details.</p>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8">
+                    <div class="chart-container">
+                        <canvas id="landscapeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h4 class="font-bold text-gray-800 mb-2">The "Squeezed Middle"</h4>
+                        <p class="text-sm text-gray-600">Traditional brands like <strong>Chicago Town</strong> and <strong>Goodfella's</strong> sit in a dangerous mid-tier quadrant. They are perceived as lower authenticity but are facing price pressure from high-quality private labels.</p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h4 class="font-bold text-gray-800 mb-2">The Premium Disruptors</h4>
+                        <p class="text-sm text-gray-600">Brands like <strong>The Dough Bros</strong> and <strong>Crosta & Mollica</strong> command high prices due to exceptional perceived authenticity. Retail private labels (<strong>Simply Better</strong>) are successfully invading this high-quality space at lower prices.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: COMPETITOR ANALYSIS -->
+        <section id="section-competitors" class="content-section hidden animate-fade-in">
+            <div class="max-w-6xl mx-auto">
+                <p class="text-sm font-semibold text-[#C05621] uppercase tracking-widest mb-2">Section 03</p>
+                <h2 class="text-4xl mb-6 text-gray-900">Competitor Deep-Dive</h2>
+                <p class="text-lg text-gray-600 mb-8">Select a competitor category and brand to reveal their specific market positioning, core strengths, and critical vulnerabilities.</p>
+
+                <!-- Filters -->
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <button onclick="filterCompetitors('all')" class="comp-filter bg-gray-800 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">All Brands</button>
+                    <button onclick="filterCompetitors('Retail Premium')" class="comp-filter bg-gray-100 text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-full text-sm font-medium transition-colors">Retail Premium</button>
+                    <button onclick="filterCompetitors('Retail Mass/Frozen')" class="comp-filter bg-gray-100 text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-full text-sm font-medium transition-colors">Retail Mass</button>
+                    <button onclick="filterCompetitors('Fresh / Restaurant / Kit')" class="comp-filter bg-gray-100 text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-full text-sm font-medium transition-colors">Fresh / Restaurant</button>
+                </div>
+
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <!-- Competitor List -->
+                    <div class="w-full lg:w-1/3">
+                        <div id="competitor-list" class="flex flex-col gap-2 max-h-[600px] overflow-y-auto pr-2">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Competitor Detail Card -->
+                    <div class="w-full lg:w-2/3">
+                        <div id="competitor-detail" class="bg-white rounded-xl shadow-md border border-gray-100 p-8 sticky top-8 min-h-[400px] flex flex-col justify-center items-center text-center">
+                            <div class="text-gray-400 text-5xl mb-4">🍕</div>
+                            <h3 class="text-2xl text-gray-500 font-medium">Select a competitor from the list</h3>
+                            <p class="text-gray-400 mt-2">View strengths, weaknesses, and market opportunities.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: CONSUMER INSIGHTS -->
+        <section id="section-insights" class="content-section hidden animate-fade-in">
+            <div class="max-w-5xl mx-auto">
+                <p class="text-sm font-semibold text-[#C05621] uppercase tracking-widest mb-2">Section 04</p>
+                <h2 class="text-4xl mb-6 text-gray-900">Consumer Insights & Behavior</h2>
+                <p class="text-lg text-gray-600 mb-8">Understanding the drivers behind the shift towards premium pizza formats. What makes consumers choose a 7€ retail pizza over a 20€ delivery?</p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <!-- Chart 1 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-semibold mb-4 text-center">Primary Purchase Drivers (Premium Sector)</h3>
+                        <div class="chart-container" style="height: 300px;">
+                            <canvas id="driversChart"></canvas>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-4 text-center">Consumers rank crust quality and authenticity above price when selecting "treat" pizzas.</p>
+                    </div>
+
+                    <!-- Chart 2 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-semibold mb-4 text-center">Consumption Occasions</h3>
+                        <div class="chart-container" style="height: 300px;">
+                            <canvas id="occasionsChart"></canvas>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-4 text-center">Premium chilled is cannibalizing traditional weekend delivery occasions.</p>
+                    </div>
+                </div>
+
+                <div class="bg-orange-50 border-l-4 border-[#C05621] p-6 rounded-r-lg">
+                    <h4 class="font-bold text-gray-900 mb-2">Key Consumer Behavioral Shift</h4>
+                    <p class="text-gray-700">
+                        The "Fakeaway" trend is dominant. Consumers are highly conscious of restaurant inflation. They are willing to pay a premium in supermarkets (e.g., €6-€8 per pizza) if the product delivers a <strong>genuine restaurant-quality experience</strong>. Products failing to visually communicate this (e.g., lacking char, using uniform cheese coverage instead of torn mozzarella) are rejected, regardless of taste.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: STRATEGIC RECOMMENDATIONS -->
+        <section id="section-recommendations" class="content-section hidden animate-fade-in">
+            <div class="max-w-5xl mx-auto">
+                <p class="text-sm font-semibold text-[#C05621] uppercase tracking-widest mb-2">Section 05</p>
+                <h2 class="text-4xl mb-6 text-gray-900">Strategic Recommendations</h2>
+                <p class="text-lg text-gray-600 mb-10">Actionable intelligence for brands looking to capture market share in the premium pizza sector.</p>
+
+                <div class="space-y-6">
+                    <!-- Rec 1 -->
+                    <div class="flex gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <div class="flex-shrink-0 w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold text-xl">1</div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">Visual Authenticity in Packaging</h3>
+                            <p class="text-gray-600">Move away from "perfect" food photography. Packaging must feature windows or transparent elements to show irregular crusts, charring, and authentic ingredient distribution. "Ugly" is the new indicator of artisan quality.</p>
+                        </div>
+                    </div>
+
+                    <!-- Rec 2 -->
+                    <div class="flex gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <div class="flex-shrink-0 w-12 h-12 bg-[#C05621] text-white rounded-full flex items-center justify-center font-bold text-xl">2</div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">Differentiate via Base Fermentation</h3>
+                            <p class="text-gray-600">The battleground has moved from toppings to the base. Brands must prominently communicate sourdough starters, hydration levels, and fermentation times (e.g., "24-hour fermented"). This justifies premium price points against private label.</p>
+                        </div>
+                    </div>
+
+                    <!-- Rec 3 -->
+                    <div class="flex gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <div class="flex-shrink-0 w-12 h-12 bg-gray-300 text-gray-800 rounded-full flex items-center justify-center font-bold text-xl">3</div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">Bridge the "Restaurant to Retail" Gap</h3>
+                            <p class="text-gray-600">Brands like Milano and Sano have leveraged restaurant equity into retail. Traditional retail brands must partner with local artisans or highly authentic ingredient suppliers (e.g., San Marzano D.O.P tomatoes) to build equivalent credibility.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- DATA SETUP ---
+        const competitors = [
+            { id: 'sorrento', name: 'Sorrento Pizza', type: 'Retail Premium', price: 6, quality: 7.5, strengths: ['Good regional distribution', 'Authentic branding'], weaknesses: ['Limited flavor innovation', 'Overshadowed by private labels'], opportunity: 'Expand into par-baked sourdough bases.' },
+            { id: 'sliceoflife', name: 'Slice of Life', type: 'Retail Premium', price: 5.5, quality: 6.5, strengths: ['Accessible price point', 'Family appeal'], weaknesses: ['Lacks premium "artisan" visual cues', 'Dough texture is standard'], opportunity: 'Health-conscious "lighter" crust options.' },
+            { id: 'goodfellas', name: 'Goodfella\'s', type: 'Retail Mass/Frozen', price: 4, quality: 4.5, strengths: ['Massive brand awareness', 'High distribution penetration', 'Price competitive'], weaknesses: ['Strong association with basic frozen quality', 'Losing "treat night" occasions'], opportunity: 'Create a completely distinct premium sub-brand.' },
+            { id: 'saturday', name: 'Saturday Pizzas', type: 'Retail Premium', price: 7.5, quality: 8, strengths: ['Excellent branding targeting specific occasions', 'High quality ingredients'], weaknesses: ['Premium price point limits volume', 'Niche distribution'], opportunity: 'Expand into complementary "treat night" sides.' },
+            { id: 'caramico', name: 'Caramico', type: 'Retail Premium', price: 6.5, quality: 7, strengths: ['Strong Italian heritage signaling', 'Good visual appeal on shelf'], weaknesses: ['Squeezed by supermarket own-brands on price/quality'], opportunity: 'Focus on unique, regional Italian topping combinations.' },
+            { id: 'pizzadapiero', name: 'Pizza da Piero', type: 'Retail Premium', price: 5, quality: 8.5, strengths: ['Exceptional base quality', 'Authentic artisan perception', 'Highly versatile as a base'], weaknesses: ['Requires consumer effort (adding toppings)', 'Lower margin due to bare product'], opportunity: 'Launch a fully topped premium line.' },
+            { id: 'oakfire', name: 'Oak Fire Pizza', type: 'Fresh / Restaurant / Kit', price: 14, quality: 9.5, strengths: ['Genuine wood-fired flavor', 'Restaurant equity', 'Experiential appeal'], weaknesses: ['High price point', 'Geographically limited distribution'], opportunity: 'Scale direct-to-consumer "finish at home" chilled retail.' },
+            { id: 'chicagotown', name: 'Chicago Town', type: 'Retail Mass/Frozen', price: 4.5, quality: 4, strengths: ['Dominates the stuffed crust niche', 'Strong youth appeal'], weaknesses: ['Perceived as highly processed/unhealthy', 'Not competing in authentic space'], opportunity: 'Lean entirely into indulgence; avoid trying to be "authentic".' },
+            { id: 'doughbros', name: 'The Dough Bros', type: 'Fresh / Restaurant / Kit', price: 16, quality: 10, strengths: ['Cult brand status', 'Unmatched DIY kit experience', 'Exceptional marketing'], weaknesses: ['Premium pricing makes it a rare treat', 'Complex fulfillment for kits'], opportunity: 'Develop a mass-market retail chilled line under a diffusion brand.' },
+            { id: 'simplybetter', name: 'Dunnes Simply Better', type: 'Retail Premium', price: 6, quality: 8.5, strengths: ['Incredible price-to-quality ratio', 'Premium packaging', 'Sourced directly from Italy'], weaknesses: ['Lacks independent brand equity outside of store'], opportunity: 'Expand seasonal/limited edition Italian regional variations.' },
+            { id: 'signature', name: 'SuperValu Signature Tastes', type: 'Retail Premium', price: 6, quality: 8, strengths: ['Strong local community trust', 'Good ingredient sourcing'], weaknesses: ['Slightly trails Dunnes in perceived luxury'], opportunity: 'Highlight hyper-local Irish artisanal toppings.' },
+            { id: 'milano', name: 'Milano (Retail)', type: 'Retail Premium', price: 7, quality: 7.5, strengths: ['Instant restaurant brand recognition', 'Consistent flavor profile'], weaknesses: ['Often discounted, hurting premium image', 'Crust lacks modern artisan char'], opportunity: 'Revamp bases to reflect modern sourdough trends.' },
+            { id: 'crosta', name: 'Crosta & Mollica', type: 'Retail Premium', price: 8, quality: 9, strengths: ['Category leading packaging', 'Ultra-authentic Italian positioning', 'Superior crust texture'], weaknesses: ['Highest retail price point', 'Vulnerable to economic downturns'], opportunity: 'Dominate the premium "dine-in" cross-merchandising (wine, antipasti).' },
+            { id: 'aldi', name: 'Aldi Specially Selected', type: 'Retail Premium', price: 4.5, quality: 8, strengths: ['Disruptive price point for premium quality', 'Award-winning perception'], weaknesses: ['Limited range/flavors', 'Store environment doesn\'t support premium price'], opportunity: 'Drive volume through aggressive blind taste-test marketing.' },
+            { id: 'dominos', name: 'Domino’s Pizza', type: 'Fresh / Restaurant / Kit', price: 20, quality: 5, strengths: ['Ultimate convenience', 'Massive marketing spend', 'Tech/app dominance'], weaknesses: ['Low perceived quality/authenticity', 'Extremely high price vs retail premium'], opportunity: 'Innovate "artisan" crust options to stem loss to premium retail.' },
+            { id: 'sano', name: 'Sano Pizza', type: 'Fresh / Restaurant / Kit', price: 12, quality: 8.5, strengths: ['Disruptive affordable restaurant pricing', 'Authentic Neapolitan style'], weaknesses: ['Retail/kit presence still developing compared to restaurant footprint'], opportunity: 'Aggressively expand chilled retail presence based on value-restaurant model.' }
+        ];
+
+        // --- NAVIGATION LOGIC ---
+        function switchTab(tabId) {
+            // Update Buttons
+            document.querySelectorAll('.nav-button').forEach(btn => {
+                btn.classList.remove('active', 'bg-gray-50');
+                btn.classList.add('text-gray-600', 'hover:bg-gray-50');
+                if(btn.id === `btn-${tabId}`) {
+                    btn.classList.add('active');
+                    btn.classList.remove('text-gray-600', 'hover:bg-gray-50');
+                }
+            });
+
+            // Update Sections
+            document.querySelectorAll('.content-section').forEach(sec => {
+                sec.classList.add('hidden');
+                if(sec.id === `section-${tabId}`) {
+                    sec.classList.remove('hidden');
+                }
+            });
+
+            // Re-render charts if their section is opened (to handle canvas resizing issues)
+            if(tabId === 'landscape' && !window.landscapeChartInst) initLandscapeChart();
+            if(tabId === 'insights' && !window.insightsChartInst) initInsightsCharts();
+        }
+
+        // --- CHART JS IMPLEMENTATION ---
+        
+        // 1. Landscape Scatter Plot
+        function initLandscapeChart() {
+            const ctx = document.getElementById('landscapeChart').getContext('2d');
+            
+            const datasets = [
+                { label: 'Retail Premium', backgroundColor: '#4A5568', data: [] },
+                { label: 'Retail Mass/Frozen', backgroundColor: '#A0AEC0', data: [] },
+                { label: 'Fresh / Restaurant / Kit', backgroundColor: '#C05621', data: [] }
+            ];
+
+            competitors.forEach(comp => {
+                let dsIndex = datasets.findIndex(ds => ds.label === comp.type);
+                datasets[dsIndex].data.push({ x: comp.price, y: comp.quality, brand: comp.name });
+            });
+
+            window.landscapeChartInst = new Chart(ctx, {
+                type: 'scatter',
+                data: { datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.raw.brand} (€${context.raw.x}, Quality: ${context.raw.y}/10)`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Price Point (€)' }, min: 0, max: 25 },
+                        y: { title: { display: true, text: 'Perceived Authenticity/Quality (1-10)' }, min: 2, max: 10.5 }
+                    }
+                }
+            });
+        }
+
+        // 2. Insights Charts
+        function initInsightsCharts() {
+            // Drivers Chart (Doughnut)
+            const ctxDrivers = document.getElementById('driversChart').getContext('2d');
+            window.insightsChartInst = true; // flag
+            new Chart(ctxDrivers, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Crust Texture/Char', 'Quality of Toppings', 'Price/Value', 'Convenience', 'Brand Name'],
+                    datasets: [{
+                        data: [45, 25, 15, 10, 5],
+                        backgroundColor: ['#C05621', '#4A5568', '#A0AEC0', '#E2E8F0', '#EDF2F7'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } }
+                }
+            });
+
+            // Occasions Chart (Bar)
+            const ctxOccasions = document.getElementById('occasionsChart').getContext('2d');
+            new Chart(ctxOccasions, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon-Wed', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                    datasets: [{
+                        label: '% of Premium Pizza Consumption',
+                        data: [10, 15, 35, 30, 10],
+                        backgroundColor: '#4A5568',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 40 } }
+                }
+            });
+        }
+
+        // --- COMPETITOR INTERACTIVITY ---
+        function renderCompetitorList(filterType = 'all') {
+            const listEl = document.getElementById('competitor-list');
+            listEl.innerHTML = '';
+
+            const filtered = filterType === 'all' 
+                ? competitors 
+                : competitors.filter(c => c.type === filterType);
+
+            filtered.forEach(comp => {
+                const btn = document.createElement('button');
+                btn.className = 'competitor-card text-left p-4 bg-white border border-gray-200 rounded-lg shadow-sm w-full transition-all flex justify-between items-center';
+                
+                // Color coding dots based on type
+                let dotColor = 'bg-gray-800';
+                if(comp.type === 'Retail Mass/Frozen') dotColor = 'bg-gray-400';
+                if(comp.type === 'Fresh / Restaurant / Kit') dotColor = 'bg-[#C05621]';
+
+                btn.innerHTML = `
+                    <div>
+                        <div class="font-bold text-gray-800">${comp.name}</div>
+                        <div class="text-xs text-gray-500">${comp.type}</div>
+                    </div>
+                    <div class="w-3 h-3 rounded-full ${dotColor}"></div>
+                `;
+                btn.onclick = () => showCompetitorDetail(comp);
+                listEl.appendChild(btn);
+            });
+        }
+
+        function filterCompetitors(type) {
+            // Update filter button styles
+            document.querySelectorAll('.comp-filter').forEach(btn => {
+                btn.classList.remove('bg-gray-800', 'text-white');
+                btn.classList.add('bg-gray-100', 'text-gray-600');
+                if(btn.innerText.includes(type.split(' ')[0]) || (type==='all' && btn.innerText==='All Brands')) {
+                     btn.classList.add('bg-gray-800', 'text-white');
+                     btn.classList.remove('bg-gray-100', 'text-gray-600');
+                }
+            });
+            renderCompetitorList(type);
+        }
+
+        function showCompetitorDetail(comp) {
+            const detailEl = document.getElementById('competitor-detail');
+            
+            // Format strengths/weaknesses into list items
+            const strHTML = comp.strengths.map(s => `<li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-1">&#10003;</span> ${s}</li>`).join('');
+            const weakHTML = comp.weaknesses.map(w => `<li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-red-500 mt-1">&#10005;</span> ${w}</li>`).join('');
+
+            detailEl.innerHTML = `
+                <div class="w-full text-left animate-fade-in">
+                    <div class="flex justify-between items-start border-b border-gray-100 pb-4 mb-6">
+                        <div>
+                            <h3 class="text-3xl font-bold text-gray-900">${comp.name}</h3>
+                            <span class="inline-block mt-2 px-3 py-1 bg-gray-100 text-xs font-semibold text-gray-600 rounded-full">${comp.type}</span>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-gray-500 uppercase tracking-wide">Est. Price</div>
+                            <div class="text-2xl font-bold text-[#C05621]">€${comp.price.toFixed(2)}</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                        <div>
+                            <h4 class="font-bold text-gray-800 mb-3 border-b-2 border-green-500 pb-1 inline-block">Core Strengths</h4>
+                            <ul class="space-y-2">${strHTML}</ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 mb-3 border-b-2 border-red-500 pb-1 inline-block">Critical Weaknesses</h4>
+                            <ul class="space-y-2">${weakHTML}</ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-5 rounded-lg border border-blue-100">
+                        <h4 class="font-bold text-blue-900 mb-2 flex items-center gap-2">
+                            <span>🚀</span> Strategic Opportunity
+                        </h4>
+                        <p class="text-sm text-blue-800">${comp.opportunity}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCompetitorList();
+            // Default load animation styling
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+            `;
+            document.head.appendChild(style);
+        });
+
+    </script>
+</body>
+</html>
